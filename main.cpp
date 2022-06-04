@@ -39,7 +39,7 @@ int main() {
     RenderWindow window(VideoMode(M * p, N * p), "Tetris!");
 
     Texture t;
-    t.loadFromFile("C:/Users/novik/CLionProjects/01 Tetris/images/tiles.png");
+    t.loadFromFile("C:/Users/novik/CLionProjects/tetris1/cmake-build-debug/images/tiles.png");
 
     Sprite tiles(t);
 
@@ -55,7 +55,7 @@ int main() {
     int ga = 0; //Добавим коэффициент для конца игры
 
     Texture go;
-    go.loadFromFile("C:/Users/novik/CLionProjects/01 Tetris/images/gameover.png");
+    go.loadFromFile("C:/Users/novik/CLionProjects/tetris1/cmake-build-debug/images/gameover.png");
     Sprite gameover(go);
     gameover.setPosition(15, 30);
     gameover.setScale(1.7, 1.7);
