@@ -4,8 +4,8 @@
 
 using namespace sf;
 
-const int M = 30; //ширина
-const int N = 30; //длина
+const int M = 18; //ширина
+const int N = 18; //длина
 int p = 18;
 
 int field[M][N] = {0}; //массив полей
@@ -36,10 +36,10 @@ bool check() {
 int main() {
     srand(time(0));
 
-    RenderWindow window(VideoMode(M * p, N * p), "Tetris!");
+    RenderWindow window(VideoMode(M  * p, N * p), "Tetris!");
 
     Texture t;
-    t.loadFromFile("C:/Users/novik/CLionProjects/tetris1/cmake-build-debug/images/tiles.png");
+    t.loadFromFile("images/tiles.png");
 
     Sprite tiles(t);
 
@@ -52,13 +52,13 @@ int main() {
     Clock clock;
     bool ad = true;
 
-    int ga = 0; //Добавим коэффициент для конца игры
+    int ga = 0; //коэффициент для конца игры
 
     Texture go;
-    go.loadFromFile("C:/Users/novik/CLionProjects/tetris1/cmake-build-debug/images/gameover.png");
+    go.loadFromFile("images/gameover.png");
     Sprite gameover(go);
     gameover.setPosition(15, 30);
-    gameover.setScale(1.7, 1.7);
+    gameover.setScale(1, 1);
 
     while (window.isOpen()) {
         float time = clock.getElapsedTime().asSeconds();
@@ -137,8 +137,6 @@ int main() {
                 ga = 0;
         }
 
-        std::cout << ga << "\n";
-
         if (ad) {
             int n = rand() % 7;
             if (a[0].x == 0)
@@ -163,7 +161,7 @@ int main() {
 
         dx = 0;
         rotate = false;
-        delay = 0.3;
+        delay = 0.5; //задержка движения
 
         window.clear(Color::White);
 
@@ -182,7 +180,7 @@ int main() {
             window.draw(tiles);
         }
 
-        if (ga > 2000)
+        if (ga > 10000)
             window.draw(gameover);
 
         window.display();
