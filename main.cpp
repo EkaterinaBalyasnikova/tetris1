@@ -10,7 +10,7 @@ const int size = 18; //размер плиток
 
 int field[wide][length] = {0}; //массив поля
 
-struct point { //структура
+struct Point { //структура
     int x, y;
 } a[4], b[4];
 
@@ -23,6 +23,9 @@ int figures[7][4] = { //массив с координатами закраши�
         3, 5, 7, 6,
         2, 3, 4, 5,
 };
+
+RenderWindow window(VideoMode(wide * size, length * size), "Tetris!");
+
 
 bool check() {
     for (auto &i: a) {
@@ -45,7 +48,7 @@ bool check() {
 }
 
 //генерирование фигуры
-auto genrandom() {
+std::void_t<> genrandom() {
     int colorNum = 1 + rand() % 7;
     for (auto &i: b)
         field[i.y][i.x] = colorNum;
@@ -56,10 +59,26 @@ auto genrandom() {
     }
 }
 
+std::void_t<> turn() {
+    Point rotation_center = a[1]; //Задаем центр вращения
+    for (int i = 0; i < 4; i++) {
+        int x = a[i].y - rotation_center.y;
+        int y = a[i].x - rotation_center.x;
+
+        a[i].x = rotation_center.x - x;
+        a[i].y = rotation_center.y + y;
+    }
+}
+
+std::void_t<> fall() {
+    for (int i = 0; i < 4; i++) {
+        b[i] = a[i];
+        a[i].y += 1;
+    }
+}
+
 int main() {
     srand(time(nullptr));
-
-    RenderWindow window(VideoMode(wide * size, length * size), "Tetris!");
 
     Texture t;
     t.loadFromFile("images/tiles.png");
@@ -79,7 +98,9 @@ int main() {
     Sprite gameover(go);
     gameover.setPosition(15, 30);
     gameover.setScale(1, 1);
-//Главный цикл приложения. Выполняется, пока открыто окно.
+
+/* Главный цикл приложения. Выполняется, пока открыто окно */
+
     while (window.isOpen()) {
         float time = period.getElapsedTime().asSeconds();
         period.restart();
@@ -118,14 +139,7 @@ int main() {
         }
 
         if (rotate) {  //поворот фигуры
-            point w = a[1]; //Задаем центр вращения
-            for (int i = 0; i < 4; i++) {
-                int x = a[i].y - w.y;
-                int y = a[i].x - w.x;
-
-                a[i].x = w.x - x;
-                a[i].y = w.y + y;
-            }
+            turn();
 
             if (!check()) {
                 for (int i = 0; i < 4; i++)
@@ -134,10 +148,7 @@ int main() {
         }
 
         if (timer > delay) { //падение
-            for (int i = 0; i < 4; i++) {
-                b[i] = a[i];
-                a[i].y += 1;
-            }
+            fall();
 
             if (!check()) { //генерирование рандомной фигуры(отрисовка её)
                 genrandom();
@@ -169,7 +180,7 @@ int main() {
                 k--;
         }
 
-        dx = 0 ;
+        dx = 0;
         rotate = false;
         delay = 0.5; //задержка движения
 
