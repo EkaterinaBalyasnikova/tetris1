@@ -27,6 +27,7 @@ int figures[7][4] = { //массив с координатами закраши�
 RenderWindow window(VideoMode(wide * size, length * size), "Tetris!");
 
 
+
 bool check() {
     for (auto &i: a) {
         if (i.x < 0) {
@@ -59,7 +60,7 @@ std::void_t<> genrandom() {
     }
 }
 
-std::void_t<> turn() {
+auto turn(){
     Point rotation_center = a[1]; //Задаем центр вращения
     for (int i = 0; i < 4; i++) {
         int x = a[i].y - rotation_center.y;
@@ -69,11 +70,19 @@ std::void_t<> turn() {
         a[i].y = rotation_center.y + y;
     }
 }
-
-std::void_t<> fall() {
+auto fall(){
     for (int i = 0; i < 4; i++) {
         b[i] = a[i];
         a[i].y += 1;
+    }
+}
+int ga = 0;
+auto gameclose(){
+    for (int i = 0; i < 4; i++) {
+        if (a[i].y > 0 && a[i].y < 4) //Если фигура находиться наверху, то прибaвляем на 1
+            ga++;
+        else if (a[i].y >= 4) //Иначе 0
+            ga = 0;
     }
 }
 
@@ -91,7 +100,7 @@ int main() {
     Clock period;
     bool position = true;
 
-    int end = 0; //коэффициент для конца игры
+ //коэффициент для конца игры
 
     Texture go;
     go.loadFromFile("images/gameover.png");
@@ -157,6 +166,9 @@ int main() {
             timer = 0;
         }
 
+        //Пишем новый цикл для этого коэффициента
+
+
 
         if (position) {
             int n = rand() % 7;
@@ -180,7 +192,7 @@ int main() {
                 k--;
         }
 
-        dx = 0;
+        dx = 0 ;
         rotate = false;
         delay = 0.5; //задержка движения
 
@@ -201,7 +213,8 @@ int main() {
             window.draw(tiles);
         }
 
-        if (end > 20000)
+        gameclose();
+        if (ga > 10000)
             window.draw(gameover);
 
         window.display();
