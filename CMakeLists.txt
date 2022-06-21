@@ -8,12 +8,12 @@ enable_testing()
 add_subdirectory(external/doctest)
 
 
-add_executable(tetris1 main.cpp texture.cpp main.h)
+add_executable(tetris1 main.cpp texture.cpp lib.cpp)
 
 target_link_libraries(tetris1 PUBLIC sfml-graphics sfml-window sfml-system)
 
-add_executable(test_tetris test_tetris.cpp)
-target_link_libraries(test_tetris PUBLIC doctest)
+add_executable(tests test_tetris.cpp lib.cpp)
+target_link_libraries(tests PUBLIC doctest)
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/images/ DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/images/)
 

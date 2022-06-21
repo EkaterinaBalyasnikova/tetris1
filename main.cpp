@@ -5,7 +5,9 @@
 
 using namespace sf;
 
+Point a[4], b[4];//структура
 
+int field[wide][length] = {0};
 
 int figures[7][4] = { //массив с координатами закрашиваемых квадратов в фигуре(7 строк, 4 столбца)
         1, 3, 5, 7,
@@ -59,28 +61,8 @@ auto fall(){
         a[i].y += 1;
     }
 }
-/*!
- * функция, проверяющая, приземлилась ли фигура
- */
-bool check(Point (&a)[4], int (&field)[wide][length]) {
-    for (auto &i: a) {
-        if (i.x < 0) {
-            return false;
-        } else {
-            if (i.x >= length) {
-                return false;
-            } else {
-                if (i.y < length) {
-                    if (field[i.y][i.x] == false)
-                        continue;
-                    return false;
-                } else
-                    return false;
-            }
-        }
-    }
-    return true;
-}
+
+
 /*! обнаружение конца игры
  * @param ga - коэффициент для конца игры
  */
