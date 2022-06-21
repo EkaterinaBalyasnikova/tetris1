@@ -1,33 +1,17 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <time.h>
+#include "main.h"
 
 using namespace sf;
 
-const int wide = 18; //ширина
-const int length = 18; //длина
-const int size = 18; //размер плиток
-
-int field[wide][length] = {0}; //массив поля
-
-struct Point { //структура
-    int x, y;
-} a[4], b[4];
-
-int figures[7][4] = { //массив с координатами закрашиваемых квадратов в фигуре(7 строк, 4 столбца)
-        1, 3, 5, 7,
-        2, 4, 5, 7,
-        3, 5, 4, 6,
-        3, 5, 4, 7,
-        2, 3, 5, 7,
-        3, 5, 7, 6,
-        2, 3, 4, 5,
-};
 
 RenderWindow window(VideoMode(wide * size, length * size), "Tetris!");
 
 
-
+/*!
+ * функция, проверяющая, приземлилась ли фигура
+ */
 bool check() {
     for (auto &i: a) {
         if (i.x < 0) {
@@ -48,18 +32,23 @@ bool check() {
     return true;
 }
 
-//генерирование фигуры
-std::void_t<> genrandom() {
+/*! генерирование фигуры
+ * @param colorNum - цвет фигуры
+ * @param fig - тип фигуры
+ */
+
+auto genrandom() {
     int colorNum = 1 + rand() % 7;
     for (auto &i: b)
         field[i.y][i.x] = colorNum;
-    int n = rand() % 7;
+    int fig = rand() % 7;
     for (int i = 0; i < 4; i++) {
-        a[i].x = figures[n][i] % 2;
-        a[i].y = figures[n][i] / 2;
+        a[i].x = figures[fig][i] % 2;
+        a[i].y = figures[fig][i] / 2;
     }
 }
-
+/*!вращение фигуры
+ */
 auto turn(){
     Point rotation_center = a[1]; //Задаем центр вращения
     for (int i = 0; i < 4; i++) {
@@ -70,22 +59,35 @@ auto turn(){
         a[i].y = rotation_center.y + y;
     }
 }
+/*! падение фигуры
+ */
 auto fall(){
     for (int i = 0; i < 4; i++) {
         b[i] = a[i];
         a[i].y += 1;
     }
 }
+
+/*! обнаружение конца игры
+ * @param ga - коэффициент для конца игры
+ */
 int ga = 0;
 auto gameclose(){
     for (int i = 0; i < 4; i++) {
-        if (a[i].y > 0 && a[i].y < 4) //Если фигура находиться наверху, то прибaвляем на 1
+        if (a[i].y > 0 && a[i].y < 4) //Если фигура находиться наверху, то увеличиваем
             ga++;
         else if (a[i].y >= 4) //Иначе 0
             ga = 0;
     }
 }
-
+/*!
+ * основная функция, выполняющая действия в игре
+ * @param dx - начальное положение по иксу
+ * @param colorNum - номер цвета фигуры
+ * @param rotate - поворот
+ * @param timer - таймер игры
+ * @param delay - задержка
+ */
 int main() {
     srand(time(nullptr));
 
@@ -94,13 +96,11 @@ int main() {
 
     Sprite tiles(t);
     tiles.setTextureRect(IntRect(0, 0, size, size));
-    int dx = 0, colorNum = 1; //управление
-    bool rotate = false; //поворот
-    float timer = 0, delay = 0.3; //движение
+    int dx = 0, colorNum = 1;
+    bool rotate = false;
+    float timer = 0, delay = 0.3;
     Clock period;
     bool position = true;
-
- //коэффициент для конца игры
 
     Texture go;
     go.loadFromFile("images/gameover.png");
@@ -108,13 +108,14 @@ int main() {
     gameover.setPosition(15, 30);
     gameover.setScale(1, 1);
 
+
 /* Главный цикл приложения. Выполняется, пока открыто окно */
 
     while (window.isOpen()) {
         float time = period.getElapsedTime().asSeconds();
         period.restart();
         timer += time;
-
+        window.display();
         Event action{};
         bool downpress = false;
         while (window.pollEvent(action)) {
@@ -136,7 +137,7 @@ int main() {
         if (downpress)
             delay = 0.05;
 
-//// Горизонтальное перемещение ////
+//Горизонтальное перемещение
         for (int i = 0; i < 4; i++) { //движение фигуры
             b[i] = a[i];
             a[i].x += dx;
@@ -166,10 +167,6 @@ int main() {
             timer = 0;
         }
 
-        //Пишем новый цикл для этого коэффициента
-
-
-
         if (position) {
             int n = rand() % 7;
             if (a[0].x == 0)
@@ -197,8 +194,8 @@ int main() {
         delay = 0.5; //задержка движения
 
         window.clear(Color::White);
-
-        for (int i = 0; i < wide; i++)  //визуализация вставания фигур(без неё опускается и не видно)
+//отрисовка конечного положения фигуры
+        for (int i = 0; i < wide; i++)
             for (int j = 0; j < length; j++) {
                 if (field[i][j] == 0)
                     continue;
@@ -206,19 +203,17 @@ int main() {
                 tiles.setPosition(j * size, i * size);
                 window.draw(tiles);
             }
-
-        for (int i = 0; i < 4; i++) {//без неё вообще ничего не видно)
+//отрисовка следующей фигуры
+        for (int i = 0; i < 4; i++) {
             tiles.setTextureRect(IntRect(colorNum * size, 0, size, size));
             tiles.setPosition(a[i].x * size, a[i].y * size);
             window.draw(tiles);
         }
-
+//завершение игры, вывод картинки об окончании
         gameclose();
         if (ga > 10000)
             window.draw(gameover);
 
-        window.display();
     }
-
     return 0;
 }

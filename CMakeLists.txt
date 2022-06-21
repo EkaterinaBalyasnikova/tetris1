@@ -12,8 +12,8 @@ add_executable(tetris1 main.cpp texture.cpp)
 
 target_link_libraries(tetris1 PUBLIC sfml-graphics sfml-window sfml-system)
 
-#add_executable(tetris1_test main.cpp tetris1_test.cpp)
-#target_link_libraries(tetris1_test PUBLIC doctest)
+add_executable(test_tetris main.h test_tetris.cpp)
+target_link_libraries(test_tetris PUBLIC doctest)
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/images/ DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/images/)
 
