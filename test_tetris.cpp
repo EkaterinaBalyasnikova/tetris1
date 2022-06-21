@@ -3,7 +3,9 @@
 #include "main.h"
 
 TEST_CASE("Сheck"){
-    REQUIRE(check() == true);
+    Point a[4];
+    int field[18][18] = {0};
+    REQUIRE(check(a, field) == true);
 }
 
 

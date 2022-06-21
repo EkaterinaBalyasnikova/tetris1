@@ -6,31 +6,23 @@
 using namespace sf;
 
 
+
+int figures[7][4] = { //массив с координатами закрашиваемых квадратов в фигуре(7 строк, 4 столбца)
+        1, 3, 5, 7,
+        2, 4, 5, 7,
+        3, 5, 4, 6,
+        3, 5, 4, 7,
+        2, 3, 5, 7,
+        3, 5, 7, 6,
+        2, 3, 4, 5,
+};
+
 RenderWindow window(VideoMode(wide * size, length * size), "Tetris!");
 
 
 /*!
  * функция, проверяющая, приземлилась ли фигура
  */
-bool check() {
-    for (auto &i: a) {
-        if (i.x < 0) {
-            return false;
-        } else {
-            if (i.x >= length) {
-                return false;
-            } else {
-                if (i.y < length) {
-                    if (field[i.y][i.x] == false)
-                        continue;
-                    return false;
-                } else
-                    return false;
-            }
-        }
-    }
-    return true;
-}
 
 /*! генерирование фигуры
  * @param colorNum - цвет фигуры
@@ -67,7 +59,28 @@ auto fall(){
         a[i].y += 1;
     }
 }
-
+/*!
+ * функция, проверяющая, приземлилась ли фигура
+ */
+bool check(Point (&a)[4], int (&field)[wide][length]) {
+    for (auto &i: a) {
+        if (i.x < 0) {
+            return false;
+        } else {
+            if (i.x >= length) {
+                return false;
+            } else {
+                if (i.y < length) {
+                    if (field[i.y][i.x] == false)
+                        continue;
+                    return false;
+                } else
+                    return false;
+            }
+        }
+    }
+    return true;
+}
 /*! обнаружение конца игры
  * @param ga - коэффициент для конца игры
  */
@@ -143,7 +156,7 @@ int main() {
             a[i].x += dx;
         }
 
-        if (!check()) {
+        if (!check(a, field)) {
             for (int i = 0; i < 4; i++)
                 a[i] = b[i];
         }
@@ -151,7 +164,7 @@ int main() {
         if (rotate) {  //поворот фигуры
             turn();
 
-            if (!check()) {
+            if (!check(a, field)) {
                 for (int i = 0; i < 4; i++)
                     a[i] = b[i];
             }
@@ -160,7 +173,7 @@ int main() {
         if (timer > delay) { //падение
             fall();
 
-            if (!check()) { //генерирование рандомной фигуры(отрисовка её)
+            if (!check(a, field)) { //генерирование рандомной фигуры(отрисовка её)
                 genrandom();
             }
 
